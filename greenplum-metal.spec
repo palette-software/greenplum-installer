@@ -26,10 +26,9 @@
 %define _binary_payload w9.bzdio
 
 
-Name: greenplum-metal
-# Version: %version
-Version: 4.3.7.27
-Epoch: 1
+Name: palette-greenplum-installer
+Version: %version
+Epoch: 0
 Release: %buildrelease
 Summary: Greenplum Database (Bare metal)
 AutoReqProv: no
