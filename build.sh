@@ -11,7 +11,7 @@ export GREENPLUM_VERSION="$(echo "$GREENPLUM_BINARY_FILE" | awk -F"-" '{ print $
 if [ -z "$TRAVIS_BUILD_NUMBER" ]; then echo "TRAVIS_BUILD_NUMBER environment variable is not set!"; exit 1; fi
 
 # The build number is coming from Travis
-BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+PACKAGE_VERSION=${TRAVIS_BUILD_NUMBER}
 GP_DIRNAME=/greenplum-db
 GP_PREFIX=/usr/local
 
@@ -51,8 +51,8 @@ echo "--> New greenplum_path.sh is:"
 cat ${RPM_GP_PATH}/greenplum_path.sh
 
 rpmbuild -bb --buildroot ${RPM_BUILD_ROOT} \
-  --define "version ${GP_VERSION}" \
-  --define "buildrelease ${BUILD_NUMBER}" \
+  --define "version ${GREENPLUM_VERSION}" \
+  --define "buildrelease ${PACKAGE_VERSION}" \
   --define "_rpmdir ${RPM_OUT_PATH}" \
   greenplum-metal.spec
 
