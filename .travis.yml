@@ -7,7 +7,6 @@ env:
       - DEPLOY_HOST=rpm.palette-software.com
       - DEPLOY_PATH=/var/palette-rpm-repo
       - DEPLOY_USER=palette-rpm
-      - RPM_VERSION=1.0.$TRAVIS_BUILD_NUMBER
 
       # travis encrypt DEPLOY_PASSWORD=...
       - secure: "JzBjDiJ3tchdYq7A0Rs+7OU44tq49X42sKgu6mYQHYEUXpLi1aVA4mzmHih96FRrgiR/FwI2dxstCEl7Y759KV3z9Hqr+tIlKDihCkTcK45XLhrLa7X3QMbgN5hY10rP0QF7MffwMLjT6SgPCVTzJ6u9PXiHjN7XQpwRReiLCS10q3C1VuYzss4Xu1D9nEJZuRqstcrwV9zRYiXuqSc7RECezpAKtr3UBFIw4g03UQq2LTqr3ip8OvxWyXjxbabRc0wNglJEBpCJaPy4yIgp+brrFfdQDcHH80pH2paMcFiZwUuUATCzl5SyMh9oA41p2n2dkYVSM6k7VlPK3Sbh7bXjkNh+8bHQap1zMTbB6TryNqIwyMe9Q9vXudyMm6y94PlEEEawsFL/CJrgyOw3WPdwM5TWcn8kL8bL6nj664568neoRyFptPzO8FTcFK1UL17SA6engyWrQ2Om51NMk/2D3O8y8DPeX9YZe5idZBlnvFCCORXrzOlxaz7k4Kbr4GYF1gyfOeN9L1FxGZEolTQloeM/sU80eiaEfjKFq9O0fXhtjsOg6D8Gly7cI8V96MDDS5ZSMV4ficKH0fCkHrvuHOiWG6pogV2edGg+IBQdPE3/l1coZ4wTkJQWEGLEv403a1W7IeG0AhjxUz6K9JDvXZz5V9MLksRGBxN7S4Q="
@@ -23,7 +22,7 @@ addons:
       - sshpass
 
 script:
-  - "./build.sh"
+  - ./build.sh . 4.3.7.3
 
 deploy:
   provider: script
