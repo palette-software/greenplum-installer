@@ -133,7 +133,7 @@ touch %{buildroot}%{servicehome}/.ssh/authorized_keys
 cp -a etc %{buildroot}
 
 %clean
-# noop
+rm -rf %{buildroot}
 
 %post
 # Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 

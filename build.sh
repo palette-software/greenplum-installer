@@ -46,6 +46,3 @@ rpmbuild -bb --buildroot ${RPM_BUILD_ROOT} \
   --define "buildrelease ${PACKAGE_VERSION}" \
   --define "_rpmdir ${RPM_OUT_PATH}" \
   greenplum-metal.spec
-
-# clean the rpm directory
-rm -rf ${RPM_BUILD_ROOT}
