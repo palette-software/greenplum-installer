@@ -89,7 +89,7 @@ echo "gpadmin hard nofile 65536" >> /etc/security/limits.d/99-gpadmin-limits.con
 echo "gpadmin soft nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
 echo "gpadmin hard nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
 
-# Systctl settings according to Pivotal Greenplum Install Guide recommendations
+# Sysctl settings according to Pivotal Greenplum Install Guide recommendations
 # The append is missing from the first line intentionally
 echo "kernel.shmmax = 500000000" | sudo tee /etc/sysctl.d/90-gpadmin.conf
 echo "kernel.shmmni = 4096" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
@@ -112,6 +112,7 @@ echo "net.core.rmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.
 echo "net.core.wmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
 echo "vm.overcommit_memory = 2" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
 echo "vm.overcommit_ratio = 95" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
+# Apply the sysctl settings without machine restart 
 sudo sysctl --system
 
 # Set blocksize
