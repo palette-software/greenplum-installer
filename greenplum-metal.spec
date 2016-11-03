@@ -161,9 +161,8 @@ cp gpinitsystem_singlenode %{buildroot}%{servicehome}/
 cp gp_vmem_protect_limit.sh %{buildroot}%{servicehome}/
 touch %{buildroot}%{servicehome}/.ssh/authorized_keys
 
-# Make greenplum a service
-mkdir -p %{buildroot}/etc/init.d/
-cp greenplum.init.d %{buildroot}/etc/init.d/greenplum
+# Copy configuration files
+cp -a etc %{buildroot}
 
 %clean
 # noop
