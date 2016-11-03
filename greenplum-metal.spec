@@ -155,10 +155,10 @@ Greenplum Database is an advanced, fully featured, open source data warehouse. I
 
 %install
 # Create the gpadmin home directory and add needed files
-mkdir -p %{buildroot}/home/gpadmin/.ssh
-cp gpinitsystem_singlenode %{buildroot}/home/gpadmin/
-cp gp_vmem_protect_limit.sh %{buildroot}/home/gpadmin/
-touch %{buildroot}/home/gpadmin/.ssh/authorized_keys
+mkdir -p %{buildroot}%{servicehome}/.ssh
+cp gpinitsystem_singlenode %{buildroot}%{servicehome}/
+cp gp_vmem_protect_limit.sh %{buildroot}%{servicehome}/
+touch %{buildroot}%{servicehome}/.ssh/authorized_keys
 
 # Make greenplum a service
 mkdir -p %{buildroot}/etc/init.d/
@@ -179,17 +179,17 @@ sudo chown gpadmin:gpadmin /var/log/greenplum
 echo "127.0.0.1" | sudo tee /etc/gphosts
 
 # Patch bashrc of gpadmin
-FILE=/home/gpadmin/.bashrc
+FILE=%{servicehome}/.bashrc
 LINE="source /usr/local/greenplum-db/greenplum_path.sh"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="export MASTER_DATA_DIRECTORY=/data/master/gpsne-1"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
-sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c /home/gpadmin/gpinitsystem_singlenode
+sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c %{servicehome}/gpinitsystem_singlenode
 
 # Tune some greenplum configuration
-export VMEM_PROTECT_LIMIT=`/home/gpadmin/gp_vmem_protect_limit.sh 4 0`
+export VMEM_PROTECT_LIMIT=`%{servicehome}/gp_vmem_protect_limit.sh 4 0`
 sudo -i -u gpadmin gpconfig -c gp_vmem_protect_limit -v $VMEM_PROTECT_LIMIT
 sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
 
@@ -212,11 +212,11 @@ sudo chkconfig --add greenplum
 
 /usr/local/greenplum-db
 %attr(755, root, root) /etc/init.d/greenplum
-%attr(700, -, -) %dir /home/gpadmin
-%attr(700, -, -) /home/gpadmin/gpinitsystem_singlenode
-%attr(700, -, -) /home/gpadmin/gp_vmem_protect_limit.sh
-%attr(700, -, -) %dir /home/gpadmin/.ssh
-%attr(600, -, -) %config(noreplace) /home/gpadmin/.ssh/authorized_keys
+%attr(700, -, -) %dir %{servicehome}
+%attr(700, -, -) %{servicehome}/gpinitsystem_singlenode
+%attr(700, -, -) %{servicehome}/gp_vmem_protect_limit.sh
+%attr(700, -, -) %dir %{servicehome}/.ssh
+%attr(600, -, -) %config(noreplace) %{servicehome}/.ssh/authorized_keys
 
 %changelog
 
