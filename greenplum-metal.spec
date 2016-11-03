@@ -46,7 +46,7 @@ URL: http://www.palette-software.com
 Packager: Palette Developers <developers@palette-software.com>
 
 # Sed will be required for GP 4.3.10 and up instead of ed
-Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed
+Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, initscripts
 Requires: kernel < 3.10, kernel >= 2.6.32-431
 
 # Add the user for the service & setup SELinux
