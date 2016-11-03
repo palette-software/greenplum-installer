@@ -128,7 +128,7 @@ done
 # Disable Transparent Huge Pages
 LINE="echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled"
 FILE=/etc/rc.d/rc.local
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 # Override the SELinux flag that disallows httpd to connect to the go process
 # https://stackoverflow.com/questions/23948527/13-permission-denied-while-connecting-to-upstreamnginx
@@ -172,9 +172,9 @@ echo "127.0.0.1" | sudo tee /etc/gphosts
 # Patch bashrc of gpadmin
 FILE=/home/gpadmin/.bashrc
 LINE="source /usr/local/greenplum-db/greenplum_path.sh"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="export MASTER_DATA_DIRECTORY=/data/master/gpsne-1"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
 sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c /home/gpadmin/gpinitsystem_singlenode
@@ -187,13 +187,13 @@ sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
 # Decorate pg_hba.conf for enabling remote and local access
 FILE=/data/master/gpsne-1/pg_hba.conf
 LINE="local all all trust"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="host all all 0.0.0.0/0 md5"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="hostssl all all 0.0.0.0/0 md5"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="host all all ::1/128 trust"
-grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
+sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 # Make greenplum a service
 sudo chkconfig --add greenplum
