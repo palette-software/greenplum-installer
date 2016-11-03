@@ -30,7 +30,7 @@ Name: palette-greenplum-installer
 Version: %version
 Epoch: 0
 Release: %buildrelease
-Summary: Greenplum Database (Bare metal)
+Summary: Greenplum Database
 AutoReqProv: no
 # Seems specifying BuildRoot is required on older rpmbuild (like on CentOS 5)
 # fpm passes '--define buildroot ...' on the commandline, so just reuse that.
