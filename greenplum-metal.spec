@@ -89,30 +89,7 @@ echo "gpadmin hard nofile 65536" >> /etc/security/limits.d/99-gpadmin-limits.con
 echo "gpadmin soft nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
 echo "gpadmin hard nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
 
-# Sysctl settings according to Pivotal Greenplum Install Guide recommendations
-# The append is missing from the first line intentionally
-echo "kernel.shmmax = 500000000" | sudo tee /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.shmmni = 4096" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.shmall = 4000000000" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.sem = 250 512000 100 2048" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.sysrq = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.core_uses_pid = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmnb = 65536" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmax = 65536" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmni = 2048" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_syncookies = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.ip_forward = 0" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.conf.default.accept_source_route = 0" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_tw_recycle = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_max_syn_backlog = 4096" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.conf.all.arp_filter = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.ip_local_port_range = 1025 65535" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.netdev_max_backlog = 10000" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.rmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.wmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "vm.overcommit_memory = 2" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "vm.overcommit_ratio = 95" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-# Apply the sysctl settings without machine restart 
+# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
 sudo sysctl --system
 
 # Set blocksize
@@ -212,11 +189,15 @@ sudo chkconfig --add greenplum
 
 /usr/local/greenplum-db
 %attr(755, root, root) /etc/init.d/greenplum
+# Sysctl settings according to Pivotal Greenplum Install Guide recommendations
+%attr(644, root, root) /etc/sysctl.d/90-gpadmin.conf
+
 %attr(700, -, -) %dir %{servicehome}
 %attr(700, -, -) %{servicehome}/gpinitsystem_singlenode
 %attr(700, -, -) %{servicehome}/gp_vmem_protect_limit.sh
 %attr(700, -, -) %dir %{servicehome}/.ssh
 %attr(600, -, -) %config(noreplace) %{servicehome}/.ssh/authorized_keys
+
 
 %changelog
 
