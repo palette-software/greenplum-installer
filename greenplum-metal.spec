@@ -69,14 +69,14 @@ export TOTAL_SIZE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f3`
 
 # Make sure that /data is formatted as xfs
 if [ "Xxfs" != "X$FS_TYPE" ]; then
-	echo "Disk mounted to /data must be formatted as xfs!"
-	exit 1
+    echo "Disk mounted to /data must be formatted as xfs!"
+    exit 1
 fi
 
 # Make sure /data is at least 1 TB
 if [ "$TOTAL_SIZE" -lt "1048062980" ]; then
-	echo "Disk mounted to /data must be at least 1 TB!"
-	exit 1
+    echo "Disk mounted to /data must be at least 1 TB!"
+    exit 1
 fi
 
 # Add the user and set its home and limits
