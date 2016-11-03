@@ -46,7 +46,7 @@ URL: http://www.palette-software.com
 Packager: Palette Developers <developers@palette-software.com>
 
 # Sed will be required for GP 4.3.10 and up instead of ed
-Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, initscripts
+Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, initscripts, python-PSI, python-lockfile, perl
 Requires: kernel < 3.10, kernel >= 2.6.32-431
 
 # Add the user for the service & setup SELinux
@@ -133,10 +133,6 @@ grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 # https://stackoverflow.com/questions/23948527/13-permission-denied-while-connecting-to-upstreamnginx
 setsebool httpd_can_network_connect on -P
 
-# Install PIP dependencies
-pip install psi
-pip install lockfile
-
 %postun
 # Dont remove the user
 
@@ -179,6 +175,14 @@ grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="export MASTER_DATA_DIRECTORY=/data/master/gpsne-1"
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
+sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
+sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c /home/gpadmin/gpinitsystem_singlenode
+
+# Tune some greenplum configuration
+export VMEM_PROTECT_LIMIT=`/home/gpadmin/gp_vmem_protect_limit.sh 4 0`
+sudo -i -u gpadmin gpconfig -c gp_vmem_protect_limit -v $VMEM_PROTECT_LIMIT
+sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
+
 # Decorate pg_hba.conf for enabling remote and local access
 FILE=/data/master/gpsne-1/pg_hba.conf
 LINE="- \"local all all trust\""
@@ -190,13 +194,7 @@ grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="- \"host all all ::1/128 trust\""
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
-# Tune some greenplum configuration
-export VMEM_PROTECT_LIMIT=`/home/gpadmin/gp_vmem_protect_limit.sh 4 0`
-sudo -i -u gpadmin gpconfig -c gp_vmem_protect_limit -v $VMEM_PROTECT_LIMIT
-sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
-
-sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
-sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c /home/gpadmin/gpinitsystem_singlenode
+# Make greenplum a service
 sudo chkconfig --add greenplum
 
 %files
