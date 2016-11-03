@@ -83,12 +83,6 @@ fi
 /usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd %{serviceuser}
 # /usr/bin/getent group %{serviceuser} || /usr/sbin/groupadd -g %{serviceuser}
 
-# Limit settings according to Pivotal Greenplum Install Guide recommendations
-echo "gpadmin soft nofile 65536" > /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin hard nofile 65536" >> /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin soft nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin hard nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
-
 # Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
 sudo sysctl --system
 
@@ -191,6 +185,8 @@ sudo chkconfig --add greenplum
 %attr(755, root, root) /etc/init.d/greenplum
 # Sysctl settings according to Pivotal Greenplum Install Guide recommendations
 %attr(644, root, root) /etc/sysctl.d/90-gpadmin.conf
+# Limit settings according to Pivotal Greenplum Install Guide recommendations
+%attr(644, root, root) /etc/security/limits.d/99-gpadmin-limits.conf
 
 %attr(700, -, -) %dir %{servicehome}
 %attr(700, -, -) %{servicehome}/gpinitsystem_singlenode
