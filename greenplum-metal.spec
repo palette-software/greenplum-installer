@@ -205,7 +205,7 @@ sudo chkconfig --add greenplum
 %attr(700, -, -) /home/gpadmin
 %attr(700, -, -) /home/gpadmin/.ssh
 %attr(755, root, root) /etc/init.d/greenplum
-%attr(600, -, -) %config(noreplace) /home/gpadmin/authorized_keys
+%attr(600, -, -) %config(noreplace) /home/gpadmin/.ssh/authorized_keys
 
 %changelog
 
