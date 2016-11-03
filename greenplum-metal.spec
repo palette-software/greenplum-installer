@@ -211,9 +211,11 @@ sudo chkconfig --add greenplum
 %defattr(-,gpadmin,gpadmin,-)
 
 /usr/local/greenplum-db
-%attr(700, -, -) /home/gpadmin
-%attr(700, -, -) /home/gpadmin/.ssh
 %attr(755, root, root) /etc/init.d/greenplum
+%attr(700, -, -) %dir /home/gpadmin
+%attr(700, -, -) /home/gpadmin/gpinitsystem_singlenode
+%attr(700, -, -) /home/gpadmin/gp_vmem_protect_limit.sh
+%attr(700, -, -) %dir /home/gpadmin/.ssh
 %attr(600, -, -) %config(noreplace) /home/gpadmin/.ssh/authorized_keys
 
 %changelog
