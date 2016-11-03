@@ -28,12 +28,6 @@ mkdir -p ${RPM_GP_PATH}
 
 mkdir -p ${RPM_OUT_PATH}
 
-# Create the gpadmin home directory and add needed files
-mkdir -p ${RPM_BUILD_ROOT}/home/gpadmin/.ssh
-cp gpinitsystem_singlenode ${RPM_BUILD_ROOT}/home/gpadmin/
-cp gp_vmem_protect_limit.sh ${RPM_BUILD_ROOT}/home/gpadmin/
-touch ${RPM_BUILD_ROOT}/home/gpadmin/.ssh/authorized_keys
-
 # Make greenplum a service
 mkdir -p ${RPM_BUILD_ROOT}/etc/init.d/
 cp greenplum.init.d ${RPM_BUILD_ROOT}/etc/init.d/greenplum

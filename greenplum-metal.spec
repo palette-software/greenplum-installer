@@ -154,7 +154,11 @@ Greenplum Database is an advanced, fully featured, open source data warehouse. I
 # noop
 
 %install
-# noop
+# Create the gpadmin home directory and add needed files
+mkdir -p %{buildroot}/home/gpadmin/.ssh
+cp gpinitsystem_singlenode %{buildroot}/home/gpadmin/
+cp gp_vmem_protect_limit.sh %{buildroot}/home/gpadmin/
+touch %{buildroot}/home/gpadmin/.ssh/authorized_keys
 
 %clean
 # noop
