@@ -186,13 +186,13 @@ sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
 
 # Decorate pg_hba.conf for enabling remote and local access
 FILE=/data/master/gpsne-1/pg_hba.conf
-LINE="- \"local all all trust\""
+LINE="local all all trust"
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
-LINE="- \"host all all 0.0.0.0/0 md5\""
+LINE="host all all 0.0.0.0/0 md5"
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
-LINE="- \"hostssl all all 0.0.0.0/0 md5\""
+LINE="hostssl all all 0.0.0.0/0 md5"
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
-LINE="- \"host all all ::1/128 trust\""
+LINE="host all all ::1/128 trust"
 grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 # Make greenplum a service
@@ -203,7 +203,9 @@ sudo chkconfig --add greenplum
 
 /usr/local/greenplum-db
 %attr(700, -, -) /home/gpadmin
+%attr(700, -, -) /home/gpadmin/.ssh
 %attr(755, root, root) /etc/init.d/greenplum
+%attr(600, -, -) %config(noreplace) /home/gpadmin/authorized_keys
 
 %changelog
 
