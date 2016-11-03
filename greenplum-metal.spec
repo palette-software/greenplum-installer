@@ -147,8 +147,6 @@ sudo chown gpadmin:gpadmin /data/master
 sudo mkdir -m 755 -p /var/log/greenplum
 sudo chown gpadmin:gpadmin /var/log/greenplum
 
-echo "127.0.0.1" | sudo tee /etc/gphosts
-
 # Patch bashrc of gpadmin
 FILE=%{servicehome}/.bashrc
 LINE="source /usr/local/greenplum-db/greenplum_path.sh"
@@ -187,6 +185,8 @@ sudo chkconfig --add greenplum
 %attr(644, root, root) /etc/sysctl.d/90-gpadmin.conf
 # Limit settings according to Pivotal Greenplum Install Guide recommendations
 %attr(644, root, root) /etc/security/limits.d/99-gpadmin-limits.conf
+# Localhost (127.0.0.1)
+%attr(644, root, root) /etc/gphosts
 
 %attr(700, -, -) %dir %{servicehome}
 %attr(700, -, -) %{servicehome}/gpinitsystem_singlenode
