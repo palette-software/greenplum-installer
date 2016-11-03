@@ -28,10 +28,6 @@ mkdir -p ${RPM_GP_PATH}
 
 mkdir -p ${RPM_OUT_PATH}
 
-# Make greenplum a service
-mkdir -p ${RPM_BUILD_ROOT}/etc/init.d/
-cp greenplum.init.d ${RPM_BUILD_ROOT}/etc/init.d/greenplum
-
 # extract the gp tarball
 SKIP=$(awk '/^__END_HEADER__/ {print NR + 1; exit 0; }' "${GREENPLUM_BINARY_PATH}")
 echo "+ Extracting from ${GREENPLUM_BINARY_PATH} to ${RPM_GP_PATH}, skipping ${SKIP} bytes"
