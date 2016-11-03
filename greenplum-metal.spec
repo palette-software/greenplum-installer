@@ -83,9 +83,6 @@ fi
 /usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd %{serviceuser}
 # /usr/bin/getent group %{serviceuser} || /usr/sbin/groupadd -g %{serviceuser}
 
-# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
-sudo sysctl --system
-
 # Set blocksize
 DISKS=`sudo lsblk -o name,type -P -e 1 | grep -e "TYPE=\"part\"" | cut -d' ' -f1`
 REGEX="NAME=\"(.*)\""
@@ -139,6 +136,9 @@ cp -a etc %{buildroot}
 # noop
 
 %post
+# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
+sudo sysctl --system
+
 source /usr/local/greenplum-db/greenplum_path.sh
 sudo mkdir -m 755 -p /data/primary
 sudo chown gpadmin:gpadmin /data/primary
