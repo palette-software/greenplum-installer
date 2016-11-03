@@ -112,6 +112,7 @@ echo "net.core.rmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.
 echo "net.core.wmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
 echo "vm.overcommit_memory = 2" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
 echo "vm.overcommit_ratio = 95" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
+sudo sysctl --system
 
 # Set blocksize
 DISKS=`sudo lsblk -o name,type -P -e 1 | grep -e "TYPE=\"part\"" | cut -d' ' -f1`
