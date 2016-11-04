@@ -170,6 +170,9 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="host all all ::1/128 trust"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
+# Enable postgres port on firewall
+sudo lokkit -p 5432:tcp
+
 # Make greenplum a service
 sudo chkconfig --add greenplum
 
