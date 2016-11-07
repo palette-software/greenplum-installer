@@ -176,6 +176,8 @@ sudo lokkit -p 5432:tcp
 # Make greenplum a service
 sudo chkconfig --add greenplum
 
+service greenplum restart
+
 %files
 %defattr(-,gpadmin,gpadmin,-)
 
