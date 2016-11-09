@@ -1,16 +1,12 @@
 sudo: required
-
 language: bash
-
 env:
   global:
-      - DEPLOY_HOST=rpm.palette-software.com
-      - DEPLOY_PATH=/var/palette-rpm-repo
-      - DEPLOY_USER=palette-rpm
-
-      # travis encrypt DEPLOY_PASS=...
-      - secure: "wx129K8BPCWWqhD9N62BR56XaASwnjRrBtA4HXiFlwIYFOLRGtcjO861j44YACEfanT3YRQcqqljh4s8m56v5CFpk8c9JGymArnccaR92IGfYXs854EE8l2NzqxZpDJReOc0QSKfTx61GWl4f2syJ8OdZNqQD4Z4ac8uMiBdqmi3fsJM59wNpNkJ97g75NcGqCu9CGuMwzsnMBQzUM8lSeSlJYdYD0OE5A3zl/pwKFc9aDt8SP+KrFoEij3VTWXNC4gvk1Ov8df6D8e2+zBmGKZenzJGEtXUYyPrpDqCvjSh4gV8By5EV6Lnh8Fs8Vg6W3EpvICc9m6abKs9NlKhs9z1v20ZUGmvNN1Bm8sibSv65spKe41sajoa6jTf2GTYmXZhpC4DuSR/PK6Ru18fl7yo4Mxk5usZSth+4y7qdhuAExRvYzJ7PxLmmWP1ZI4NaXYJA4URgeFXsvFkLnuMpWp0I0tFX87KZt/7XXW5NNSsDVxoSB3nojqlrTb4HFrTrTxdnv3LW+n4/gJsoeOixiWidgVqgG7ZFCYNhjPfv5ai3QxlLNguwu+nK8NKpIxX5dQCShApvjpp++WWeaQC0/vV50nAKdckKgULC2HU7PXXhwANlgcfFKE5TGm5wPWd79ZunQHHuomaIuMSUHwpcQBKgOzC5oZF4iE6Lp4qngk="
-
+    - DEPLOY_HOST=rpm.palette-software.com
+    - DEPLOY_PATH=/var/palette-rpm-repo
+    - DEPLOY_USER=palette-rpm
+    # DEPLOY_PASS
+    - secure: 2l2dhMyLPSYsqZ4Um5tJn4U2Dk81nk6X4Ma2JiqiBL/LV7thMm8N5k09hGJ7LHH7HBI2fK1QZmgAi/1e/NwtKiZB2FyH8FdICusViXs6kKjX/ZOzbCVNwuFh39Gv5rIZ4NQDRxnpTL3Uf6uh099W2bHkrs4i64TmfCE7CKsd+cUu/oSy83krd6qzgNbKypQJo5pAhjN+tUHzlb5qxeyN2jipiKY/spH+DamOd5DhoIIZFMjPXVWmOLhCxH1xe3DvViA+i/obvP4Mo3durwmFP8ZNHUSp1yW5XVBNm+uCtuNBRsNbOBjfc2sxGm0sYNH7OZOqkv/nAUDFluqvzpc5/d0C0nmeJvdSC51oCw7H9dfvcD4gOJkbXYEXFAP4NuVz84Rpph7fyesmzhtlIaokdHNQRxoUno1FvkueQMUDWbxknxgi7yxH0GDRDte73UzrnfyM+qH/XhP72hcB6QjcEPDlu/aE+6I5xsSu5IV8PbJOI/YL3nUcfthmEN8iyg2LmL++W7drDrHOR2ZLJVwxdR8Y6yesPBGbEpzlkjjVsa2pnmyZLTPhsmvC1boQoY5AusjfpMCEv385cag9STSmkfNEq/AJ2MEZWT1EblGrhetrOEcWB76qY+GWehzg20y4UG5NtMinY8WCiY8j3ffr1Xih6i23Y1hBcQWHWfkmuOA=
 # install the RPM package
 addons:
   apt:
@@ -18,7 +14,6 @@ addons:
       - rpm
       # To deploy the rpms, we need to ssh into places, and we dont want to store keys for now
       - sshpass
-
 before_install:
   # Download Git Large File Storage extension as the Greenplum installer found in the Github repo is stored there
   - curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
@@ -26,18 +21,15 @@ before_install:
 
   # And now populate the large files into the repo
   - git lfs pull
-
 script:
   - ./build.sh
-
 deploy:
   provider: script
-  script: "./deploy.sh"
+  script: ./deploy.sh
   skip_cleanup: true
   on:
     branch: master
     tags: false
-
 notifications:
   email:
     on_success: never
