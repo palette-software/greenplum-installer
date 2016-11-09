@@ -28,16 +28,6 @@ mkdir -p ${RPM_GP_PATH}
 
 mkdir -p ${RPM_OUT_PATH}
 
-# Create the gpadmin home directory and add needed files
-mkdir -p ${RPM_BUILD_ROOT}/home/gpadmin/.ssh
-cp gpinitsystem_singlenode ${RPM_BUILD_ROOT}/home/gpadmin/
-cp gp_vmem_protect_limit.sh ${RPM_BUILD_ROOT}/home/gpadmin/
-touch ${RPM_BUILD_ROOT}/home/gpadmin/.ssh/authorized_keys
-
-# Make greenplum a service
-mkdir -p ${RPM_BUILD_ROOT}/etc/init.d/
-cp greenplum.init.d ${RPM_BUILD_ROOT}/etc/init.d/greenplum
-
 # extract the gp tarball
 SKIP=$(awk '/^__END_HEADER__/ {print NR + 1; exit 0; }' "${GREENPLUM_BINARY_PATH}")
 echo "+ Extracting from ${GREENPLUM_BINARY_PATH} to ${RPM_GP_PATH}, skipping ${SKIP} bytes"
@@ -56,6 +46,3 @@ rpmbuild -bb --buildroot ${RPM_BUILD_ROOT} \
   --define "buildrelease ${PACKAGE_VERSION}" \
   --define "_rpmdir ${RPM_OUT_PATH}" \
   greenplum-metal.spec
-
-# clean the rpm directory
-rm -rf ${RPM_BUILD_ROOT}

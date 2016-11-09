@@ -69,50 +69,19 @@ export TOTAL_SIZE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f3`
 
 # Make sure that /data is formatted as xfs
 if [ "Xxfs" != "X$FS_TYPE" ]; then
-	echo "Disk mounted to /data must be formatted as xfs!"
-	exit 1
+    echo "Disk mounted to /data must be formatted as xfs!"
+    exit 1
 fi
 
 # Make sure /data is at least 1 TB
 if [ "$TOTAL_SIZE" -lt "1048062980" ]; then
-	echo "Disk mounted to /data must be at least 1 TB!"
-	exit 1
+    echo "Disk mounted to /data must be at least 1 TB!"
+    exit 1
 fi
 
 # Add the user and set its home and limits
 /usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd %{serviceuser}
 # /usr/bin/getent group %{serviceuser} || /usr/sbin/groupadd -g %{serviceuser}
-
-# Limit settings according to Pivotal Greenplum Install Guide recommendations
-echo "gpadmin soft nofile 65536" > /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin hard nofile 65536" >> /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin soft nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
-echo "gpadmin hard nproc 131072" >> /etc/security/limits.d/99-gpadmin-limits.conf
-
-# Systctl settings according to Pivotal Greenplum Install Guide recommendations
-# The append is missing from the first line intentionally
-echo "kernel.shmmax = 500000000" | sudo tee /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.shmmni = 4096" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.shmall = 4000000000" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.sem = 250 512000 100 2048" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.sysrq = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.core_uses_pid = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmnb = 65536" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmax = 65536" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "kernel.msgmni = 2048" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_syncookies = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.ip_forward = 0" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.conf.default.accept_source_route = 0" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_tw_recycle = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.tcp_max_syn_backlog = 4096" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.conf.all.arp_filter = 1" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.ipv4.ip_local_port_range = 1025 65535" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.netdev_max_backlog = 10000" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.rmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "net.core.wmem_max = 2097152" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "vm.overcommit_memory = 2" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-echo "vm.overcommit_ratio = 95" | sudo tee --append /etc/sysctl.d/90-gpadmin.conf
-sudo sysctl --system
 
 # Set blocksize
 DISKS=`sudo lsblk -o name,type -P -e 1 | grep -e "TYPE=\"part\"" | cut -d' ' -f1`
@@ -154,12 +123,19 @@ Greenplum Database is an advanced, fully featured, open source data warehouse. I
 # noop
 
 %install
-# noop
+# Copy gpadmin home directory and needed files
+cp -a home %{buildroot}
+
+# Copy configuration files
+cp -a etc %{buildroot}
 
 %clean
-# noop
+rm -rf %{buildroot}
 
 %post
+# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
+sudo sysctl --system
+
 source /usr/local/greenplum-db/greenplum_path.sh
 sudo mkdir -m 755 -p /data/primary
 sudo chown gpadmin:gpadmin /data/primary
@@ -168,20 +144,18 @@ sudo chown gpadmin:gpadmin /data/master
 sudo mkdir -m 755 -p /var/log/greenplum
 sudo chown gpadmin:gpadmin /var/log/greenplum
 
-echo "127.0.0.1" | sudo tee /etc/gphosts
-
 # Patch bashrc of gpadmin
-FILE=/home/gpadmin/.bashrc
+FILE=%{servicehome}/.bashrc
 LINE="source /usr/local/greenplum-db/greenplum_path.sh"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="export MASTER_DATA_DIRECTORY=/data/master/gpsne-1"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
-sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c /home/gpadmin/gpinitsystem_singlenode
+sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c %{servicehome}/gpinitsystem_singlenode
 
 # Tune some greenplum configuration
-export VMEM_PROTECT_LIMIT=`/home/gpadmin/gp_vmem_protect_limit.sh 4 0`
+export VMEM_PROTECT_LIMIT=`%{servicehome}/gp_vmem_protect_limit.sh 4 0`
 sudo -i -u gpadmin gpconfig -c gp_vmem_protect_limit -v $VMEM_PROTECT_LIMIT
 sudo -i -u gpadmin gpconfig -c statement_mem -v 1000MB
 
@@ -196,17 +170,32 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="host all all ::1/128 trust"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
+# Enable postgres port on firewall
+sudo lokkit -p 5432:tcp
+
 # Make greenplum a service
 sudo chkconfig --add greenplum
+
+service greenplum restart
 
 %files
 %defattr(-,gpadmin,gpadmin,-)
 
 /usr/local/greenplum-db
-%attr(700, -, -) /home/gpadmin
-%attr(700, -, -) /home/gpadmin/.ssh
 %attr(755, root, root) /etc/init.d/greenplum
-%attr(600, -, -) %config(noreplace) /home/gpadmin/.ssh/authorized_keys
+# Sysctl settings according to Pivotal Greenplum Install Guide recommendations
+%attr(644, root, root) /etc/sysctl.d/90-gpadmin.conf
+# Limit settings according to Pivotal Greenplum Install Guide recommendations
+%attr(644, root, root) /etc/security/limits.d/99-gpadmin-limits.conf
+# Localhost (127.0.0.1)
+%attr(644, root, root) /etc/gphosts
+
+%attr(700, -, -) %dir %{servicehome}
+%attr(700, -, -) %{servicehome}/gpinitsystem_singlenode
+%attr(700, -, -) %{servicehome}/gp_vmem_protect_limit.sh
+%attr(700, -, -) %dir %{servicehome}/.ssh
+%attr(600, -, -) %config(noreplace) %{servicehome}/.ssh/authorized_keys
+
 
 %changelog
 
