@@ -40,7 +40,7 @@ AutoReqProv: no
 Prefix: /
 
 Group: default
-License: Apache2
+License: GNU GPL v3
 Vendor: Palette Software
 URL: http://www.palette-software.com
 Packager: Palette Developers <developers@palette-software.com>
@@ -133,7 +133,7 @@ cp -a etc %{buildroot}
 rm -rf %{buildroot}
 
 %post
-# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart 
+# Apply the sysctl settings (/etc/sysctl.d/90-gpadmin.conf) without machine restart
 sudo sysctl --system
 
 source /usr/local/greenplum-db/greenplum_path.sh
