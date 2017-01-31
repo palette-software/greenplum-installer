@@ -38,18 +38,16 @@ The following process is executed by the installer:
   - a disk should be mounted with 1 TB of free diskspace
   - it should be formated with `XFS` filesystem
 - creates the `gpadmin` user
-- **FIXME** sets the blocksize
+- sets the blocksize
 - disables Transparent Huge Pages
 - overrides the SELinux flag that disallows httpd to connect to the go process
-- **FIXME** tunes some greenplum configuration
+- tunes some greenplum configuration
 - enables remote and local access
 - enables port 5432 on firewall
 - makes greenplum a service
 
 ## Is Palette Greenplum Installer supported?
 
-Palette Greenplum Installer is licensed under the GNU GPLv3 license. For professional support please contact developers@palette-software.com
-
-**TODO: Clarify support part!**
+Palette Greenplum Installer is licensed under the GNU GPL v3 license. For professional support please contact developers@palette-software.com
 
 Any bugs discovered should be filed in the [Palette Greenplum Installer Git issue tracker](https://github.com/palette-software/greenplum-installer/issues) or contribution is more than welcome.
