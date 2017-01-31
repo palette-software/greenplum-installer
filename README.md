@@ -1,3 +1,7 @@
+# Palette Insight Architecture
+
+![Palette Insight Architecture](https://github.com/palette-software/palette-insight/blob/master/insight-system-diagram.png?raw=true)
+
 # Palette Greenplum Installer
 [Greenplum Database]:  http://greenplum.org
 
