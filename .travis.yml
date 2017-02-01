@@ -22,6 +22,9 @@ before_install:
   # And now populate the large files into the repo
   - git lfs pull
 script:
+  # Travis build number hack, because build number got reset when making this private repo to public, and
+  # the version is reflecting the Greenplum version.
+  - export TRAVIS_BUILD_NUMBER=$((TRAVIS_BUILD_NUMBER + 25))
   - ./build.sh
 deploy:
   provider: script
