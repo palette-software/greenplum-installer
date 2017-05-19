@@ -81,7 +81,7 @@ fi
 
 # Make sure /data is at least the required size
 if [ "$TOTAL_SIZE" -lt "$REQUIRED_DATA_PARTITION_SIZE" ]; then
-    echo "Disk mounted to /data must be at least $REQUIRED_DATA_PARTITION_SIZE B!"
+    echo "Disk mounted to /data must be at least $REQUIRED_DATA_PARTITION_SIZE KB!"
     exit 1
 fi
 
