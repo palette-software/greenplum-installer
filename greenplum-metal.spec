@@ -73,9 +73,15 @@ if [ "Xxfs" != "X$FS_TYPE" ]; then
     exit 1
 fi
 
-# Make sure /data is at least 1 TB
-if [ "$TOTAL_SIZE" -lt "1048062980" ]; then
-    echo "Disk mounted to /data must be at least 1 TB!"
+# The default requirement is 1 TB
+REQUIRED_DATA_PARTITION_SIZE=1048062980
+if [ -n "$PALETTE_REQUIRED_DATA_PARTITION_SIZE" ]; then
+REQUIRED_DATA_PARTITION_SIZE=$PALETTE_REQUIRED_DATA_PARTITION_SIZE
+fi
+
+# Make sure /data is at least the required size
+if [ "$TOTAL_SIZE" -lt "$REQUIRED_DATA_PARTITION_SIZE" ]; then
+    echo "Disk mounted to /data must be at least $REQUIRED_DATA_PARTITION_SIZE B!"
     exit 1
 fi
 
