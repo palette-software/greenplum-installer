@@ -117,7 +117,8 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
 # Override the SELinux flag that disallows httpd to connect to the go process
 # https://stackoverflow.com/questions/23948527/13-permission-denied-while-connecting-to-upstreamnginx
-setsebool httpd_can_network_connect on -P
+#
+setsebool httpd_can_network_connect on -P || true
 
 %postun
 # Dont remove the user
