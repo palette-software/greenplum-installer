@@ -63,26 +63,35 @@ if [ ! -d "/data" ]; then
     exit 1
 fi
 
-export DATA_MOUNT_INFO=`df -T | grep /data | tr -s ' '`
-export FS_TYPE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f2`
-export TOTAL_SIZE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f3`
+# The requirement is turned OFF by default
 
-# Make sure that /data is formatted as xfs
-if [ "Xxfs" != "X$FS_TYPE" ]; then
-    echo "Disk mounted to /data must be formatted as xfs!"
-    exit 1
+CHECK_DATA_PARTITION=0
+if [ -n "$PALETTE_CHECK_DATA_PARTITION" ]; then
+    CHECK_DATA_PARTITION=$PALETTE_CHECK_DATA_PARTITION
 fi
 
-# The default requirement is 1 TB
-REQUIRED_DATA_PARTITION_SIZE=1048062980
-if [ -n "$PALETTE_REQUIRED_DATA_PARTITION_SIZE" ]; then
-REQUIRED_DATA_PARTITION_SIZE=$PALETTE_REQUIRED_DATA_PARTITION_SIZE
-fi
+if [ "$CHECK_DATA_PARTITION" -ne "0" ]; then
+    export DATA_MOUNT_INFO=`df -T | grep /data | tr -s ' '`
+    export FS_TYPE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f2`
+    export TOTAL_SIZE=`echo $DATA_MOUNT_INFO  | cut -d' ' -f3`
 
-# Make sure /data is at least the required size
-if [ "$TOTAL_SIZE" -lt "$REQUIRED_DATA_PARTITION_SIZE" ]; then
-    echo "Disk mounted to /data must be at least $REQUIRED_DATA_PARTITION_SIZE KB!"
-    exit 1
+    # Make sure that /data is formatted as xfs
+    if [ "Xxfs" != "X$FS_TYPE" ]; then
+        echo "Disk mounted to /data must be formatted as xfs!"
+        exit 1
+    fi
+
+    # The default requirement is 1 TB
+    REQUIRED_DATA_PARTITION_SIZE=1048062980
+    if [ -n "$PALETTE_REQUIRED_DATA_PARTITION_SIZE" ]; then
+    REQUIRED_DATA_PARTITION_SIZE=$PALETTE_REQUIRED_DATA_PARTITION_SIZE
+    fi
+
+    # Make sure /data is at least the required size
+    if [ "$TOTAL_SIZE" -lt "$REQUIRED_DATA_PARTITION_SIZE" ]; then
+        echo "Disk mounted to /data must be at least $REQUIRED_DATA_PARTITION_SIZE KB!"
+        exit 1
+    fi
 fi
 
 # Add the user and set its home and limits
