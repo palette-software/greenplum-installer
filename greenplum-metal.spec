@@ -47,8 +47,9 @@ Packager: Palette Developers <developers@palette-software.com>
 
 # Sed will be required for GP 4.3.10 and up instead of ed
 Requires: initscripts >= 9.03.53
-Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, python-PSI, python-lockfile, perl
-Requires: kernel < 3.10, kernel >= 2.6.32-431
+Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, python-lockfile, perl
+# All RHEL 7 and CentOS 7 versions use kernel version 3.10.x, but only 7.3+ versions are supported by Greenplum
+# Requires: kernel < 3.10, kernel >= 2.6.32-431
 
 # Add the user for the service & setup SELinux
 # ============================================
@@ -214,4 +215,3 @@ service greenplum restart
 
 
 %changelog
-
