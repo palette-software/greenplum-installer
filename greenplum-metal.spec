@@ -141,7 +141,7 @@ Greenplum Database is an advanced, fully featured, open source data warehouse. I
 
 %install
 # Copy gpadmin home directory and needed files
-cp -a home %{buildroot}
+cp -a var %{buildroot}
 
 # Copy configuration files
 cp -a etc %{buildroot}
