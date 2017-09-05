@@ -15,10 +15,6 @@ addons:
       # To deploy the rpms, we need to ssh into places, and we dont want to store keys for now
       - sshpass
 before_install:
-  # Download Git Large File Storage extension as the Greenplum installer found in the Github repo is stored there
-  - curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-  - sudo apt-get install git-lfs=1.4.4
-
   # And now populate the large files into the repo
   - git lfs pull
 script:
