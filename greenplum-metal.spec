@@ -1,5 +1,5 @@
 %define serviceuser gpadmin
-%define servicehome /home/gpadmin
+%define servicehome /var/lib/gpadmin
 
 #   Disable any prep shell actions. replace them with simply 'true'
 # %define __spec_prep_post true
@@ -96,7 +96,7 @@ if [ "$CHECK_DATA_PARTITION" -ne "0" ]; then
 fi
 
 # Add the user and set its home and limits
-/usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd %{serviceuser}
+/usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd -d %{servicehome} %{serviceuser}
 # /usr/bin/getent group %{serviceuser} || /usr/sbin/groupadd -g %{serviceuser}
 
 # Set blocksize
