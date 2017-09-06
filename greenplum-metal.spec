@@ -95,9 +95,15 @@ if [ "$CHECK_DATA_PARTITION" -ne "0" ]; then
     fi
 fi
 
+# Set Selinux to permissive mode to enable creating home directory under /var/lib, otherwise
+# the created home folder would be owned by root and the skeleton files would be missing
+SELINUX_STATE=`getenforce`
+setenforce 0
 # Add the user and set its home and limits
 /usr/bin/getent passwd %{serviceuser} || /usr/sbin/useradd -d %{servicehome} %{serviceuser}
 # /usr/bin/getent group %{serviceuser} || /usr/sbin/groupadd -g %{serviceuser}
+# Revert to original Selinux state
+setenforce ${SELINUX_STATE}
 
 # Set blocksize
 DISKS=`sudo lsblk -o name,type -P -e 1 | grep -e "TYPE=\"part\"" | cut -d' ' -f1`
