@@ -174,7 +174,10 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 LINE="export MASTER_DATA_DIRECTORY=/data/master/gpsne-1"
 sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 
-sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
+# The gpssh-exkeys command is only for verifying the Greenplum installation,
+# but it can hang with prompting for password when FirewallD is active
+#sudo -i -u gpadmin gpssh-exkeys -f /etc/gphosts
+
 sudo -i -u gpadmin gpinitsystem -a -h /etc/gphosts -c %{servicehome}/gpinitsystem_singlenode
 
 # Tune some greenplum configuration
