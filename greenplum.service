@@ -1,0 +1,24 @@
+[Unit]
+Description=The Greenplum Database server
+After=network-online.target remote-fs.target sshd.service network-online.target
+Wants=network-online.target
+Conflicts=shutdown.target
+
+[Service]
+Type=forking
+Restart=no
+TimeoutSec=5min
+IgnoreSIGPIPE=no
+KillMode=process
+GuessMainPID=no
+RemainAfterExit=yes
+Environment=SOURCE_FILE=/usr/local/greenplum-db/greenplum_path.sh
+Environment=GPLOG=/var/log/greenplum/service.log
+Environment=MASTER_DATA_DIRECTORY=/data/master/gpsne-1
+User=gpadmin
+ExecStart=/bin/bash -c 'source ${SOURCE_FILE}; /usr/local/greenplum-db/bin/gpstart -a >>${GPLOG} 2>&1'
+ExecStop=/bin/bash -c 'source ${SOURCE_FILE}; /usr/local/greenplum-db/bin/gpstop -a -M fast >>${GPLOG} 2>&1'
+ExecReload=/bin/bash -c 'source ${SOURCE_FILE}; /usr/local/greenplum-db/bin/gpstop -u >>${GPLOG} 2>&1'
+
+[Install]
+WantedBy=multi-user.target

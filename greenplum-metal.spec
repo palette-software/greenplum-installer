@@ -1,5 +1,6 @@
 %define serviceuser gpadmin
 %define servicehome /var/lib/gpadmin
+%define servicefile greenplum.service
 
 #   Disable any prep shell actions. replace them with simply 'true'
 # %define __spec_prep_post true
@@ -48,6 +49,7 @@ Packager: Palette Developers <developers@palette-software.com>
 # Sed will be required for GP 4.3.10 and up instead of ed
 Requires: initscripts >= 9.03.53
 Requires: gcc, python, python-pip, python-paramiko, net-tools, python-devel, ed, python-lockfile, perl
+BuildRequires: systemd
 # All RHEL 7 and CentOS 7 versions use kernel version 3.10.x, but only 7.3+ versions are supported by Greenplum
 # Requires: kernel < 3.10, kernel >= 2.6.32-431
 
@@ -128,6 +130,8 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 setsebool httpd_can_network_connect on -P || true
 
 %postun
+%systemd_postun
+
 # Dont remove the user
 
 # TODO: we should switch back the httpd_can_network_connect flag for SELinux, IF we know that its safe to do so
@@ -151,6 +155,10 @@ cp -a var %{buildroot}
 
 # Copy configuration files
 cp -a etc %{buildroot}
+
+# Install systemd service file
+mkdir -p %{buildroot}%{_unitdir}
+install -p -m 644 %{servicefile} %{buildroot}%{_unitdir}/%{servicefile}
 
 %clean
 rm -rf %{buildroot}
@@ -198,16 +206,25 @@ sudo grep -q "$LINE" "$FILE" || echo "$LINE" | sudo tee --append "$FILE"
 ## If firelwallD is enabled, try the following
 #firewall-cmd --zone=public --permanent --add-service=postgresql
 
-# Make greenplum a service
-sudo chkconfig --add greenplum
+# Make gpinitsystem already started the DB but systemd is not aware of this
+su -l gpadmin -c "gpstop -a -M fast"
 
-service greenplum restart
+# Make greenplum a service
+%systemd_post %{servicefile}
+systemctl enable %{servicefile}
+systemctl start %{servicefile}
+
+%preun
+%systemd_preun %{servicefile}
+# Make sure Greenplum is stopped (might not started with systemctl)
+su -l gpadmin -c "gpstop -a -M fast" || true
 
 %files
 %defattr(-,gpadmin,gpadmin,-)
 
 /usr/local/greenplum-db
-%attr(755, root, root) /etc/init.d/greenplum
+%attr(-, root, root) %{_unitdir}/%{servicefile}
+
 # Sysctl settings according to Pivotal Greenplum Install Guide recommendations
 %attr(644, root, root) /etc/sysctl.d/90-gpadmin.conf
 # Limit settings according to Pivotal Greenplum Install Guide recommendations
