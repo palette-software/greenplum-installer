@@ -1,5 +1,7 @@
 sudo: required
 language: bash
+dist: xenial
+
 env:
   global:
     - DEPLOY_HOST=palette-rpm.brilliant-data.net
@@ -14,6 +16,8 @@ addons:
       - rpm
       # To deploy the rpms, we need to ssh into places, and we dont want to store keys for now
       - sshpass
+      # required for new systemd based deployer
+      - systemd
 before_install:
   # And now populate the large files into the repo
   - git lfs pull
