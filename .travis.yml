@@ -1,5 +1,6 @@
-sudo: required
+sudo: false
 language: bash
+
 env:
   global:
     - DEPLOY_HOST=palette-rpm.brilliant-data.net
@@ -7,21 +8,30 @@ env:
     - DEPLOY_USER=palette-rpm
     # DEPLOY_PASS
     - secure: "hYeLas9z7gOpgeEc82L+BxtZYA/hyv2mcWY/Osq6Hpu+KgFigrlslMQWqS4tIjBZ39Ml2i4LbqcjHfxT/J+RXQ//K1xcTe5hAVSaYV0DiCRQur23dFPPT//wYgVC2OE/dJHyMGH5AU8qCT+diwqLBgUDhJ499Ow1s7l1eX5vAllPDga+lPoyUYQy5x3YLJsXOCmiWbp9P6b9fIpvTcVsDva3JHaIiUz5b8DNf+V5q3BHuFrzKk8EkTfa/AFi42dwT92Fl0z4C2+DrhES5FaWBQgMKPS90pyLM2i8zZqusluAypAcrvOvMAqibRhp+IIhjdi93vZkZUkGOFehukasYinTYIvd9y+vNLaSOqwj5sLQRNNmhdR1viWcasRsz5yTw5vZG8gtl9UvgEtQcJlyt25uKSO+vZJFmLq5uoRhpX+Lq1lt4gUUKSi48IUFsiFAoLs4EQDkuTSeBK/YeMVHFZsbj8zrAgLuUxJ9jDPulMimlqgGvuAvtkSfSCQ3j5Ie+5dUOL5X0rfRxuHRTzMsw6pd6SzxAlziona+9PErl4luWLU0gWCMxotKGzW+Gu1MGHslSpj+ETfYDazhDHTX20GgvjP86qCvmQ0HR0lLnTW3f44lFrp8xMjtriqd274wVIA5L2CMuvtTwc/gVU3IXKmh5dl8I76vWqDJYNb9k2s="
+    - SOURCE_VOLUME_PATH=/source
+    - DOCKER_IMAGE=centos
+    - DOCKER_IMAGE_TAG=7
+
 # install the RPM package
+services:
+  - docker
 addons:
   apt:
     packages:
-      - rpm
       # To deploy the rpms, we need to ssh into places, and we dont want to store keys for now
       - sshpass
+
 before_install:
   # And now populate the large files into the repo
   - git lfs pull
+  - docker pull "${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}"
 script:
   # Travis build number hack, because build number got reset when making this private repo to public, and
   # the version is reflecting the Greenplum version.
   - export TRAVIS_BUILD_NUMBER=$((TRAVIS_BUILD_NUMBER + 25))
-  - ./build.sh
+  # Build RPM package in docker
+  - docker run --env TRAVIS_BUILD_NUMBER --workdir "${SOURCE_VOLUME_PATH}" --rm -it -v $(pwd):${SOURCE_VOLUME_PATH} "${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}" /bin/bash -c "yum install -y rpm-build && ./build.sh"
+
 deploy:
   provider: script
   script: ./deploy.sh

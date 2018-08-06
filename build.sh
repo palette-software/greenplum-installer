@@ -19,7 +19,7 @@ GP_INSTALL_PATH=${GP_PREFIX}${GP_DIRNAME}
 
 RPM_ROOT=/tmp/gp-rpm-build
 RPM_BUILD_ROOT=${RPM_ROOT}/root
-RPM_OUT_PATH=${RPM_ROOT}/_build
+RPM_OUT_PATH="$(pwd)/$(dirname "$0")/_build"
 RPM_GP_PATH=${RPM_BUILD_ROOT}${GP_INSTALL_PATH}
 
 # Create the root directory & the greenplum directory
@@ -41,7 +41,7 @@ mv ${RPM_GP_PATH}/greenplum_path.sh.tmp ${RPM_GP_PATH}/greenplum_path.sh
 echo "--> New greenplum_path.sh is:"
 cat ${RPM_GP_PATH}/greenplum_path.sh
 
-rpmbuild -bb --buildroot ${RPM_BUILD_ROOT} \
+rpmbuild -bb --buildroot "${RPM_BUILD_ROOT}" \
   --define "version ${GREENPLUM_VERSION}" \
   --define "buildrelease ${PACKAGE_VERSION}" \
   --define "_rpmdir ${RPM_OUT_PATH}" \

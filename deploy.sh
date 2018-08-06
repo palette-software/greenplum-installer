@@ -9,7 +9,7 @@ if [ -z "$DEPLOY_PASS" ]; then echo "DEPLOY_PASS environment variable is not set
 # Upload the RPM to the RPM repository
 # by exportin it to SSHPASS, sshpass wont log the command line and the password
 export SSHPASS=$DEPLOY_PASS
-sshpass -e scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /tmp/gp-rpm-build/_build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+sshpass -e scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r _build/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 
 # Update the RPM repository
 export DEPLOY_CMD="createrepo ${DEPLOY_PATH}/"
