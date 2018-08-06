@@ -30,7 +30,7 @@ script:
   # the version is reflecting the Greenplum version.
   - export TRAVIS_BUILD_NUMBER=$((TRAVIS_BUILD_NUMBER + 25))
   # Build RPM package in docker
-  - docker run --env TRAVIS_BUILD_NUMBER "${TRAVIS_BUILD_NUMBER}" --workdir "${SOURCE_VOLUME_PATH}" --rm -it -v $(pwd):${SOURCE_VOLUME_PATH} "${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}" /bin/bash -c "yum install -y rpm-build && ./build.sh"
+  - docker run --env TRAVIS_BUILD_NUMBER --workdir "${SOURCE_VOLUME_PATH}" --rm -it -v $(pwd):${SOURCE_VOLUME_PATH} "${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}" /bin/bash -c "yum install -y rpm-build && ./build.sh"
 
 deploy:
   provider: script
